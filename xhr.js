@@ -1,28 +1,41 @@
 const url = 'https://jsonplaceholder.typicode.com/users'
 
-function myAxios(method,url){
+function myAxios(method,url,body=null){
 
-  const xhr = new XMLHttpRequest();
+  return new Promise((resolve,reject)=>{
+    
+    const xhr = new XMLHttpRequest();
 
-  xhr.open(method,url);
-  xhr.responseType = 'json';
+    xhr.open(method,url);
+    xhr.responseType = 'json';
+    xhr.setRequestHeader('Content-Type','application/json')
   
-  xhr.onload = () =>{
-    if(xhr.status >=400){
-      console.log('failed!')
-    }else{
-      console.log(xhr.response);
+    xhr.onload = () =>{
+      if(xhr.status >=400){
+        reject(xhr.response);
+      }else{
+        resolve(xhr.response);
+      }
+      
     }
     
-  }
-  
-  xhr.onerror = () => {
-    console.log('Error!!!');
-  }
-  
-  xhr.send();
+    xhr.onerror = () => {
+      reject(xhr.response);
+    }
+    
+    xhr.send(JSON.stringify(body));
+
+  })
 
 }
 
-myAxios('GET',url);
+// myAxios('GET',url);
 
+myAxios('POST',url,{
+  name:'sifat',
+  job:'software developer'
+}).then((res)=>{
+  console.log(res);
+}).catch((err)=>{
+  console.log(err);
+});
